@@ -1,5 +1,13 @@
 /** Types matching backend serializers / API_CONTRACT.md */
 
+export interface PlaceSuggestion {
+  label: string;
+  city: string;
+  state: string;
+  latitude: number;
+  longitude: number;
+}
+
 export interface Place {
   query: string;
   address: string;

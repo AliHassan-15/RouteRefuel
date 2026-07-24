@@ -99,6 +99,7 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "EXCEPTION_HANDLER": "fuel.exceptions.api_exception_handler",
     "DEFAULT_THROTTLE_RATES": {
+        "place_suggest": os.getenv("PLACE_SUGGEST_THROTTLE", "120/min"),
         # Production-readiness default; override via env if needed.
         "route_plan": os.getenv("ROUTE_PLAN_THROTTLE", "60/min"),
     },

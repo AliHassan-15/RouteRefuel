@@ -311,6 +311,22 @@ body {
   opacity: 0.6;
 }
 
+.suggest-menu {
+  background: var(--color-slate-panel);
+  border: 1px solid rgba(45, 76, 100, 0.85);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-float);
+}
+
+.suggest-option {
+  color: var(--color-mist-bright);
+}
+
+.suggest-option-active,
+.suggest-option:hover {
+  background: rgba(245, 165, 36, 0.12);
+}
+
 .loading-orb {
   position: relative;
   width: 42px;

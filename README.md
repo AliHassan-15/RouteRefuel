@@ -19,6 +19,7 @@ Built by **Ali Hassan** ([hassanakramali@gmail.com](mailto:hassanakramali@gmail.
 | Resource | URL |
 |---|---|
 | Plan a route (API) | `POST /api/v1/route/` |
+| Place suggest (typeahead) | `GET /api/v1/places/suggest/?q=` |
 | Health | `GET /api/v1/health/` |
 | OpenAPI / Swagger | [/api/docs/](http://127.0.0.1:8000/api/docs/) |
 | Contract | [`API_CONTRACT.md`](API_CONTRACT.md) |

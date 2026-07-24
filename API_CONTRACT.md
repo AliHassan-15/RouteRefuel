@@ -1,10 +1,30 @@
 # API response contract (frontend-facing)
 
-**Endpoint:** `POST /api/v1/route/`  
+**Primary endpoint:** `POST /api/v1/route/`  
+**Place suggest:** `GET /api/v1/places/suggest/?q=St.%20Louis&limit=12`  
 **Docs:** `http://127.0.0.1:8000/api/docs/`  
 **OpenAPI schema:** `http://127.0.0.1:8000/api/schema/`
 
 This is the locked contract for the React frontend. Field names below are stable.
+
+## Place suggest `200`
+
+Offline USA cities typeahead (no Nominatim per keystroke). Supports `St.` / `Saint` aliases.
+
+```json
+{
+  "query": "St. Louis",
+  "suggestions": [
+    {
+      "label": "St. Louis, MO",
+      "city": "St. Louis",
+      "state": "MO",
+      "latitude": 38.627,
+      "longitude": -90.199
+    }
+  ]
+}
+```
 
 ## Success `200`
 

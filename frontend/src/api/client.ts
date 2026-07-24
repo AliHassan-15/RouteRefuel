@@ -1,5 +1,12 @@
-import type { ApiErrorResponse, RoutePlanRequest, RoutePlanResponse } from "../types/api";
+import type {
+  ApiErrorResponse,
+  PlaceSuggestion,
+  RoutePlanRequest,
+  RoutePlanResponse,
+} from "../types/api";
 import { ApiError } from "../types/api";
+
+export type { PlaceSuggestion };
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "";
 
@@ -35,4 +42,29 @@ export async function planRoute(payload: RoutePlanRequest): Promise<RoutePlanRes
   }
 
   return data as RoutePlanResponse;
+}
+
+export async function suggestPlaces(
+  query: string,
+  signal?: AbortSignal
+): Promise<PlaceSuggestion[]> {
+  const trimmed = query.trim();
+  if (trimmed.length < 1) return [];
+
+  const params = new URLSearchParams({ q: trimmed, limit: "12" });
+  const response = await fetch(
+    `${API_BASE}/api/v1/places/suggest/?${params.toString()}`,
+    {
+      method: "GET",
+      headers: { Accept: "application/json" },
+      signal,
+    }
+  );
+
+  if (!response.ok) return [];
+
+  const data = (await response.json()) as {
+    suggestions?: PlaceSuggestion[];
+  };
+  return Array.isArray(data.suggestions) ? data.suggestions : [];
 }

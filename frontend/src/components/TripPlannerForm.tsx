@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
+import { PlaceAutocomplete } from "./PlaceAutocomplete";
 
 export interface TripFormValues {
   start: string;
@@ -48,70 +49,37 @@ export function TripPlannerForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-      <div>
-        <label
-          htmlFor="start"
-          className="mb-1.5 block text-[11px] font-semibold tracking-[0.12em] text-mist uppercase"
-        >
-          Start
-        </label>
-        <input
-          id="start"
-          name="start"
-          value={start}
-          disabled={disabled}
-          onChange={(e) => {
-            setStart(e.target.value);
-            if (errors.start) setErrors((prev) => ({ ...prev, start: undefined }));
-          }}
-          placeholder="Chicago, IL"
-          autoComplete="address-level2"
-          className="field-input text-base sm:text-sm"
-          aria-invalid={Boolean(errors.start)}
-          aria-describedby={errors.start ? "start-error" : "start-hint"}
-        />
-        {errors.start ? (
-          <p id="start-error" className="mt-1.5 text-xs text-danger-soft" role="alert">
-            {errors.start}
-          </p>
-        ) : (
-          <p id="start-hint" className="sr-only">
-            USA city or full address
-          </p>
-        )}
-      </div>
+      <PlaceAutocomplete
+        id="start"
+        name="start"
+        label="Start"
+        value={start}
+        disabled={disabled}
+        placeholder="Start typing a USA city…"
+        error={errors.start}
+        onChange={(value) => {
+          setStart(value);
+          if (errors.start) setErrors((prev) => ({ ...prev, start: undefined }));
+        }}
+      />
 
-      <div>
-        <label
-          htmlFor="finish"
-          className="mb-1.5 block text-[11px] font-semibold tracking-[0.12em] text-mist uppercase"
-        >
-          Finish
-        </label>
-        <input
-          id="finish"
-          name="finish"
-          value={finish}
-          disabled={disabled}
-          onChange={(e) => {
-            setFinish(e.target.value);
-            if (errors.finish) setErrors((prev) => ({ ...prev, finish: undefined }));
-          }}
-          placeholder="Dallas, TX"
-          autoComplete="address-level2"
-          className="field-input text-base sm:text-sm"
-          aria-invalid={Boolean(errors.finish)}
-          aria-describedby={errors.finish ? "finish-error" : undefined}
-        />
-        {errors.finish ? (
-          <p id="finish-error" className="mt-1.5 text-xs text-danger-soft" role="alert">
-            {errors.finish}
-          </p>
-        ) : null}
-      </div>
+      <PlaceAutocomplete
+        id="finish"
+        name="finish"
+        label="Finish"
+        value={finish}
+        disabled={disabled}
+        placeholder="Start typing a USA city…"
+        error={errors.finish}
+        onChange={(value) => {
+          setFinish(value);
+          if (errors.finish)
+            setErrors((prev) => ({ ...prev, finish: undefined }));
+        }}
+      />
 
       <p className="text-[11px] leading-relaxed text-mist">
-        USA only · 500 mi tank · 10 MPG assumptions
+        USA only · type to search cities · 500 mi tank · 10 MPG
       </p>
 
       <button

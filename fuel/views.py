@@ -112,3 +112,58 @@ class HealthView(APIView):
                 "stations_active": active,
             }
         )
+
+
+class PlaceSuggestThrottle(AnonRateThrottle):
+    scope = "place_suggest"
+
+
+class PlaceSuggestView(APIView):
+    """
+    Typeahead for USA places.
+
+    Uses the offline US cities index (same file as station ingest) so typing
+    does not burn Nominatim quota. Returns labels like "Chicago, IL".
+    """
+
+    authentication_classes: list = []
+    permission_classes: list = []
+    throttle_classes = [PlaceSuggestThrottle]
+
+    @extend_schema(
+        tags=["Places"],
+        summary="Suggest USA places while typing",
+        description=(
+            "Prefix search over an offline USA cities index. "
+            "Query with `q` (min 1 character) and optional `limit` (1–20)."
+        ),
+        responses={200: dict},
+    )
+    def get(self, request):
+        from fuel.services.place_suggest import suggest_places
+
+        query = str(request.query_params.get("q") or "").strip()
+        try:
+            limit = int(request.query_params.get("limit") or 12)
+        except (TypeError, ValueError):
+            limit = 12
+
+        if len(query) < 1:
+            return Response({"query": query, "suggestions": []})
+
+        hits = suggest_places(query, limit=limit)
+        return Response(
+            {
+                "query": query,
+                "suggestions": [
+                    {
+                        "label": s.label,
+                        "city": s.city,
+                        "state": s.state,
+                        "latitude": s.latitude,
+                        "longitude": s.longitude,
+                    }
+                    for s in hits
+                ],
+            }
+        )
