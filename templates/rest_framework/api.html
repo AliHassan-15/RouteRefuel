@@ -1,0 +1,90 @@
+{% extends "rest_framework/base.html" %}
+{% load static %}
+
+{# Adds a one-click "Copy response" control above the browsable API JSON pane. #}
+
+{% block style %}
+  {{ block.super }}
+  <style>
+    .response-copy-bar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 8px;
+    }
+    .response-copy-bar .btn-copy-response {
+      font-size: 12px;
+      padding: 4px 12px;
+    }
+    .response-copy-bar .btn-copy-response.is-copied {
+      background: #5cb85c;
+      border-color: #4cae4c;
+      color: #fff;
+    }
+  </style>
+{% endblock %}
+
+{% block script %}
+  {{ block.super }}
+  <script>
+    (function () {
+      var responseInfo = document.querySelector(".response-info");
+      if (!responseInfo) return;
+
+      var pre = responseInfo.querySelector("pre");
+      if (!pre) return;
+
+      var bar = document.createElement("div");
+      bar.className = "response-copy-bar";
+
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "btn btn-default btn-copy-response";
+      btn.textContent = "Copy response";
+      btn.title = "Copy the full HTTP status, headers, and JSON body";
+
+      btn.addEventListener("click", function () {
+        var text = pre.innerText || pre.textContent || "";
+        function done(ok) {
+          var original = "Copy response";
+          btn.textContent = ok ? "Copied!" : "Copy failed";
+          btn.classList.toggle("is-copied", !!ok);
+          setTimeout(function () {
+            btn.textContent = original;
+            btn.classList.remove("is-copied");
+          }, 1600);
+        }
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () {
+            done(true);
+          }).catch(function () {
+            fallbackCopy(text, done);
+          });
+        } else {
+          fallbackCopy(text, done);
+        }
+      });
+
+      function fallbackCopy(text, done) {
+        var area = document.createElement("textarea");
+        area.value = text;
+        area.setAttribute("readonly", "");
+        area.style.position = "fixed";
+        area.style.left = "-9999px";
+        document.body.appendChild(area);
+        area.select();
+        try {
+          done(document.execCommand("copy"));
+        } catch (e) {
+          done(false);
+        }
+        document.body.removeChild(area);
+      }
+
+      bar.appendChild(btn);
+      responseInfo.insertBefore(bar, pre);
+    })();
+  </script>
+{% endblock %}
